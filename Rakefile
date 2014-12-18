@@ -15,6 +15,13 @@ Dir[ROOT_PATH+"/helpers/*.rb"].each{ |file| require file }
 
 namespace :db do
 
+  desc 'Creates database'
+    task :create_db do
+    conn = PG::Connection.open()
+    conn.exec('CREATE DATABASE restaurant;')
+    conn.close
+  end
+
   desc 'Deletes all trips and stops from database'
   task :clear_trips do
     conn = PG.connect({
