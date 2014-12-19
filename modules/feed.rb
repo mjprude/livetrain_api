@@ -1,7 +1,17 @@
+require 'bundler'
+Bundler.require
+
 module Feed
-  def parse
+  require './connection'
+  require './mta_assets/gtfs-realtime.pb.rb'
+  require './mta_assets/nyct-subway.pb.rb'
+  require './modules/mta.rb'
+  require './models/trip.rb'
+  require './models/stop.rb'
+
+  def self.parse
   # ************ Helper Methods *************
-    def create_stops_from_entity(entity, trip)
+    def self.create_stops_from_entity(entity, trip)
       entity[:trip_update][:stop_time_update].each do |stop_update|
         Stop.create({
           trip_id: trip.id,
@@ -12,7 +22,7 @@ module Feed
       end
     end
 
-    def update_existing_stops(entity, trip)
+    def self.update_existing_stops(entity, trip)
       entity[:trip_update][:stop_time_update].each do |stop_update|
         if stop = trip.stops.find_by({stop_id: MTA::Stop.stop_id(stop_update)})
           stop.update({
@@ -23,7 +33,7 @@ module Feed
       end
     end
 
-    def new_trip_start_time(feed_entity)
+    def self.new_trip_start_time(feed_entity)
       if upcoming_departure_timestamp = MTA::Stop.departure_time(feed_entity[:trip_update][:stop_time_update][0])
         upcoming_departure_timestamp
       else

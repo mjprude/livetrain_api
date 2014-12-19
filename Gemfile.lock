@@ -18,7 +18,12 @@ GEM
     backports (3.6.3)
     builder (3.2.2)
     chronic (0.10.2)
+    clockwork (1.1.0)
+      activesupport
+      tzinfo
     coderay (1.1.0)
+    daemons (1.1.9)
+    eventmachine (1.0.3)
     httparty (0.13.3)
       json (~> 1.8)
       multi_xml (>= 0.5.2)
@@ -57,6 +62,10 @@ GEM
     sinatra-reloader (1.0)
       sinatra-contrib
     slop (3.6.0)
+    thin (1.6.3)
+      daemons (~> 1.0, >= 1.0.9)
+      eventmachine (~> 1.0)
+      rack (~> 1.0)
     thread_safe (0.3.4)
     tilt (1.4.1)
     tzinfo (1.2.2)
@@ -69,6 +78,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  clockwork
   httparty
   json
   pg
@@ -78,5 +88,6 @@ DEPENDENCIES
   sinatra-activerecord
   sinatra-cross_origin (~> 0.3.1)
   sinatra-reloader
+  thin
   varint
   whenever
