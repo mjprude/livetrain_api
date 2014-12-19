@@ -1,105 +1,17 @@
 require 'bundler'
 Bundler.require
 
-require 'sinatra/activerecord/rake'
-require './connection'
-require './mta_assets/gtfs-realtime.pb.rb'
-require './mta_assets/nyct-subway.pb.rb'
-require './modules/mta.rb'
-require './models/trip.rb'
-require './models/stop.rb'
+module Feed
+  require './connection'
+  require './mta_assets/gtfs-realtime.pb.rb'
+  require './mta_assets/nyct-subway.pb.rb'
+  require './modules/mta.rb'
+  require './models/trip.rb'
+  require './models/stop.rb'
 
-ROOT_PATH = Dir.pwd
-Dir[ROOT_PATH+"/lib/*.rb"].each{ |file| require file }
-Dir[ROOT_PATH+"/helpers/*.rb"].each{ |file| require file }
-
-# namespace :clockwork do
-#   desc 'Start the clockwork daemon'
-#   task :start => :environment do
-#     pid = fork do
-#       $stdout.reopen("/dev/null")
-#       $stdout.sync = true
-#       $stderr.reopen($stdout)
-#       include Clockwork
-
-#       handler do |job_class|
-#         Resque.enqueue(job_class)
-#       end
-
-#       every(30.seconds, Gameday::FrequentUpdates)
-#       every(1.day, Gameday::DailyJob, :at => "01:30")
-#       run
-#     end
-#     Process.detach(pid)
-#     File.open("./tmp/clockwork_#{Rails.env}_pid.txt", "w") do |file|
-#       file << pid
-#     end
-#   end
-
-#   desc "Stop the clockwork daemon"
-#   task :stop => :environment do
-#     pid = File.read("./tmp/clockwork_#{Rails.env}_pid.txt").to_i
-#     Process.kill(1, pid)
-#   end
-
-#   desc 'restart the clockwork daemon'
-#   task :restart => [:stop, :start]
-# end
-
-namespace :db do
-
-  desc 'Deletes all trips and stops from database'
-  task :clear_trips do
-    conn = PG.connect({
-      dbname: 'mta_realtime'
-      })
-    conn.exec('DELETE FROM trips;')
-    conn.exec('DELETE FROM stops;')
-    conn.close
-  end
-
-end
-
-desc "Show Routes for This File"
-task :routes do
-  puts "******************"
-
-  def capitalize_http(route)
-    route
-    .gsub('get', '    GET  ')
-    .gsub('put', '    PUT  ')
-    .gsub('patch', '  PATCH  ')
-    .gsub('post', '   POST  ')
-    .gsub('delete', ' DELETE  ')
-  end
-
-  def get_routes(path)
-    route_regex = /(get|post|delete|patch|put) '\/.*(?= )/
-    app = File.readlines(path)
-    puts "Routes in #{path}\n******************"
-    app.grep(route_regex).each do |line|
-      puts capitalize_http(route_regex.match(line)[0])
-    end
-    puts "******************"
-  end
-
-  if File.exist?('app.rb')
-    get_routes('app.rb')
-  else
-    Dir['./controllers/*.rb'].each{ |controller| get_routes(controller) }
-  end
-
-end
-
-namespace :mta do
-
-  ##########################################################
-  # Use this task to retrieve MTA feed data
-  ##########################################################
-  desc 'run feed retriever'
-  task :feed do
-    # ************ Helper Methods *************
-    def create_stops_from_entity(entity, trip)
+  def self.parse
+  # ************ Helper Methods *************
+    def self.create_stops_from_entity(entity, trip)
       entity[:trip_update][:stop_time_update].each do |stop_update|
         Stop.create({
           trip_id: trip.id,
@@ -110,7 +22,7 @@ namespace :mta do
       end
     end
 
-    def update_existing_stops(entity, trip)
+    def self.update_existing_stops(entity, trip)
       entity[:trip_update][:stop_time_update].each do |stop_update|
         if stop = trip.stops.find_by({stop_id: MTA::Stop.stop_id(stop_update)})
           stop.update({
@@ -121,7 +33,7 @@ namespace :mta do
       end
     end
 
-    def new_trip_start_time(feed_entity)
+    def self.new_trip_start_time(feed_entity)
       if upcoming_departure_timestamp = MTA::Stop.departure_time(feed_entity[:trip_update][:stop_time_update][0])
         upcoming_departure_timestamp
       else

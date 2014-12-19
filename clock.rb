@@ -1,11 +1,12 @@
 require 'clockwork'
-require "sidekiq.rb"
+require './modules/feed'
 
 module Clockwork
+
   handler do |job|
-    puts "Fetching MTA feed..."
+    puts "#{job} running..."
   end
 
-  every(30.seconds, MTAWorker.perform)
+  every(30.seconds, Feed.parse)
 
 end

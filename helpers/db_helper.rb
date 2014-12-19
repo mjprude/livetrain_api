@@ -3,18 +3,21 @@ module DBHelper
   def update_json
     all_trains = []
 
-    Trip.where(route: '1').each do |trip|
+    Trip.where(route: ['1', '6']).each do |trip|
+
       if trip.start_time - Time.now.to_i < 60
 
         last_stop = trip.stops.where('departure_time < ?',  Time.now.to_i).order('departure_time DESC').first
         last_stop ||= trip.stops.where('departure_time > ?',  Time.now.to_i).order('departure_time ASC').first
 
-        stop1 = trip.stops.where('arrival_time > ?',  Time.now.to_i).order('arrival_time ASC').first
+        future_stops = trip.stops.where('arrival_time > ?',  Time.now.to_i).order('arrival_time ASC')
 
-        stop2 = trip.stops.where('arrival_time > ?',  Time.now.to_i).order('arrival_time ASC').second
+        stop1 = future_stops[0]
+
+        stop2 = future_stops[1]
         trip2Complete = (stop2 == nil)
 
-        stop3 = trip.stops.where('arrival_time > ?',  Time.now.to_i).order('arrival_time ASC').third
+        stop3 = future_stops[2]
         trip3Complete = (stop3 == nil)
 
 
