@@ -13,6 +13,39 @@ ROOT_PATH = Dir.pwd
 Dir[ROOT_PATH+"/lib/*.rb"].each{ |file| require file }
 Dir[ROOT_PATH+"/helpers/*.rb"].each{ |file| require file }
 
+# namespace :clockwork do
+#   desc 'Start the clockwork daemon'
+#   task :start => :environment do
+#     pid = fork do
+#       $stdout.reopen("/dev/null")
+#       $stdout.sync = true
+#       $stderr.reopen($stdout)
+#       include Clockwork
+
+#       handler do |job_class|
+#         Resque.enqueue(job_class)
+#       end
+
+#       every(30.seconds, Gameday::FrequentUpdates)
+#       every(1.day, Gameday::DailyJob, :at => "01:30")
+#       run
+#     end
+#     Process.detach(pid)
+#     File.open("./tmp/clockwork_#{Rails.env}_pid.txt", "w") do |file|
+#       file << pid
+#     end
+#   end
+
+#   desc "Stop the clockwork daemon"
+#   task :stop => :environment do
+#     pid = File.read("./tmp/clockwork_#{Rails.env}_pid.txt").to_i
+#     Process.kill(1, pid)
+#   end
+
+#   desc 'restart the clockwork daemon'
+#   task :restart => [:stop, :start]
+# end
+
 namespace :db do
 
   desc 'Deletes all trips and stops from database'
