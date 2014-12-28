@@ -93,9 +93,8 @@ module DBHelper
         end
         json_ary << route_obj
       end
-    end
-
-
+      json_ary
+    end.to_json
   end
 
 
