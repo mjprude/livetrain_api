@@ -1,7 +1,7 @@
 module DBHelper
 
   def query
-    current_time = 1419294150 #Time.now.to_i
+    current_time = 1420062092 #Time.now.to_i
     <<-SQL
       SELECT * FROM stops_by_trip x
       WHERE departure_time = (
@@ -173,7 +173,6 @@ module DBHelper
   end
 
 end
-helpers DBHelper
 
 
 # SELECT * FROM stops_by_trip x WHERE departure_time = ( SELECT MAX(departure_time) FROM stops_by_trip y WHERE departure_time BETWEEN 0 AND 1419294150 AND x.mta_trip_id = y.mta_trip_id ) UNION ALL SELECT * FROM stops_by_trip x WHERE arrival_time = ( SELECT MIN(arrival_time) FROM stops_by_trip y WHERE arrival_time IS NOT NULL AND arrival_time > 1419294150 AND x.mta_trip_id = y.mta_trip_id ) UNION ALL SELECT * FROM stops_by_trip x WHERE arrival_time = ( SELECT arrival_time FROM stops_by_trip y WHERE arrival_time IS NOT NULL AND arrival_time > 1419294150 AND x.mta_trip_id = y.mta_trip_id ORDER BY arrival_time ASC LIMIT 1 OFFSET 1 ) UNION ALL SELECT * FROM stops_by_trip x WHERE arrival_time = ( SELECT arrival_time FROM stops_by_trip y WHERE arrival_time IS NOT NULL AND arrival_time > 1419294150 AND x.mta_trip_id = y.mta_trip_id ORDER BY arrival_time ASC LIMIT 1 OFFSET 2 ) ORDER BY mta_trip_id, departure_time;
