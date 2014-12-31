@@ -1,13 +1,7 @@
-require 'bundler'
-Bundler.require
-
 module Feed
-  require './connection'
-  require './mta_assets/gtfs-realtime.pb.rb'
-  require './mta_assets/nyct-subway.pb.rb'
-  require './modules/mta.rb'
-  require './models/trip.rb'
-  require './models/stop.rb'
+  require File.expand_path('../../../lib/assets/mta_assets/gtfs-realtime.pb', __FILE__)
+  require File.expand_path('../../../lib/assets/mta_assets/nyct-subway.pb', __FILE__)
+  require File.expand_path('../mta.rb', __FILE__)
 
   def self.parse
   # ************ Helper Methods *************
