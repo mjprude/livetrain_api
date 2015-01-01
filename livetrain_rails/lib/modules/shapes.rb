@@ -1,12 +1,12 @@
 module Shapes
 
   def self.stops
-    stops = File.read(ROOT_PATH + '/mta_assets/subway_stops_geojson.json')
+    stops = File.read(Rails.root + 'lib/assets/mta_assets/subway_stops_geojson.json')
     JSON.parse(stops)['features']
   end
 
   def self.route
-    route = File.read(ROOT_PATH + '/mta_assets/subway_routes_geojson.json')
+    route = File.read(Rails.root + 'lib/assets/mta_assets/subway_routes_geojson.json')
     data = JSON.parse(route)
   end
 

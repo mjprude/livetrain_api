@@ -1,6 +1,8 @@
 module DBHelper
+  extend ActiveSupport::Concern
+  require File.expand_path(Rails.root + 'lib/modules/shapes', __FILE__)
 
-  def query
+  def self.query
     current_time = 1420062092 #Time.now.to_i
     <<-SQL
       SELECT * FROM stops_by_trip x
@@ -41,11 +43,11 @@ module DBHelper
     SQL
   end
 
-  def execute_sql
+  def self.execute_sql
     ActiveRecord::Base.connection.execute(query)
   end
 
-  def update_json
+  def self.update_json
     trips_array = execute_sql.group_by{ |row| row['mta_trip_id'] }.values
 
     trips_array.each_with_object([]) do |trip, json_ary|
@@ -96,82 +98,6 @@ module DBHelper
       json_ary
     end.to_json
   end
-
-
-
-
-
-
-
-  def update_json2
-    all_trains = []
-    current_time = 1419294150 #Time.now.to_i
-
-    Trip.where(route: ['1', '6']).each do |trip|
-
-      if trip.start_time - current_time < 60
-
-        last_stop = trip.stops.where('departure_time < ?',  current_time).order('departure_time DESC').first
-        last_stop ||= trip.stops.where('departure_time > ?',  current_time).order('departure_time ASC').first
-
-        future_stops = trip.stops.where('arrival_time > ?',  current_time).order('arrival_time ASC')
-
-        stop1 = future_stops[0]
-
-        stop2 = future_stops[1]
-        trip2Complete = (stop2 == nil)
-
-        stop3 = future_stops[2]
-        trip3Complete = (stop3 == nil)
-
-
-
-        begin
-          if stop1 && last_stop
-            route_obj = {
-              trip_id: 't' + trip.mta_trip_id.gsub('.', '_'),
-              route: trip.route,
-              direction: trip.direction,
-              updated: trip.mta_timestamp,
-
-              lastStop: last_stop.stop_id,
-              lastDeparture: last_stop.departure_time,
-
-              stop1: stop1.stop_id,
-              path1: Shapes.get_path(trip.route, last_stop.stop_id, stop1.stop_id),
-              arrival1: stop1.arrival_time,
-              departure1: stop1.departure_time,
-
-              trip1Complete: false,
-              trip2Complete: trip2Complete,
-              trip3Complete: trip3Complete
-            }
-          end
-
-          if stop2
-            route_obj[:stop2] = stop2.stop_id
-            route_obj[:path2] = Shapes.get_path(trip.route, stop1.stop_id, stop2.stop_id)
-            route_obj[:arrival2] = stop2.arrival_time
-            route_obj[:departure2] = stop2.departure_time
-          end
-
-          if stop3
-            route_obj[:stop3] = stop3.stop_id
-            route_obj[:path3] = Shapes.get_path(trip.route, stop2.stop_id, stop3.stop_id)
-            route_obj[:arrival3] = stop3.arrival_time
-            route_obj[:departure3] = stop3.departure_time
-          end
-
-        rescue Exception => e
-          e
-          binding.pry
-        end
-        all_trains << route_obj
-      end
-    end
-    all_trains.compact.to_json
-  end
-
 end
 
 

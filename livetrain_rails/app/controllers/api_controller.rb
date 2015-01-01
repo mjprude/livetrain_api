@@ -4,7 +4,7 @@ class ApiController < ApplicationController
   end
 
   def update
-    render json: update_json
+    render json: DBHelper::update_json
   end
 
   def line
