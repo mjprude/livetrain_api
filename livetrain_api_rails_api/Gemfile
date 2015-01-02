@@ -10,7 +10,9 @@ gem 'spring', :group => :development
 
 gem 'pg'
 
-
+gem 'httparty'
+gem 'ruby-protocol-buffers'
+gem 'varint'
 
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.1.2'
