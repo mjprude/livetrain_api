@@ -3,7 +3,7 @@ module DBHelper
   require File.expand_path(Rails.root + 'lib/modules/shapes', __FILE__)
 
   def self.query
-    current_time = 1420062092 #Time.now.to_i
+    current_time = Time.now.to_i
     <<-SQL
       SELECT * FROM stops_by_trip x
       WHERE departure_time = (
