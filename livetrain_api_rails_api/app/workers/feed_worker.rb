@@ -104,11 +104,21 @@ class FeedWorker
       end
     end
 
+    @trip_update_execution_time = Time.now
 
+    # Prepare JSON and save to tmp file
+    current_time = Time.now
+    date, time, zone = current_time.to_s.split(' ')
+    string = "MTA_feeds/" + date + '_' + time.gsub(':', '.') + "_realtime.json"
+
+    f = File.open(string, 'a+')
+    f.write(DBHelper::update_json)
+    f.close
 
     f = File.open("#{Rails.root}/log/worker.log", "a+")
-      f.write("\n\n\nExecution time: #{Time.now}  /  #{Time.now.to_i}")
-      f.write("\nProcess Start Time: #{@process_start_time}")
+      f.write("\n\n\nProcess Start Time: #{@process_start_time}")
+      f.write("\nTrip Update Time: #{@trip_update_execution_time}")
+      f.write("\nExecution time: #{Time.now}  /  #{Time.now.to_i}")
       f.write("\nTotal MTA Updates: #{@updated_trips}")
       f.write("\n Created trips: #{@num_created_trips}")
       f.write("\n Updated trips: #{@num_updated_trips}")
