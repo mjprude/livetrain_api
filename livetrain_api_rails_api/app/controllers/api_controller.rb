@@ -4,7 +4,8 @@ class ApiController < ApplicationController
   end
 
   def update
-    render json: DBHelper::update_json
+    f = File.read("#{Rails.root}" + '/app/assets/MTA_feeds/2015-01-06_17.16.13_realtime.json')
+    render json: JSON.parse(f)
   end
 
   def line

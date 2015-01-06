@@ -109,10 +109,13 @@ class FeedWorker
     # Prepare JSON and save to tmp file
     current_time = Time.now
     date, time, zone = current_time.to_s.split(' ')
-    string = "MTA_feeds/" + date + '_' + time.gsub(':', '.') + "_realtime.json"
+
+    string = "#{Rails.root}" + "/app/assets/MTA_feeds/" + date + '_' + time.gsub(':', '.') + "_realtime.json"
+
+    payload = DBHelper::update_json
 
     f = File.open(string, 'a+')
-    f.write(DBHelper::update_json)
+    f.write(payload)
     f.close
 
     f = File.open("#{Rails.root}/log/worker.log", "a+")
