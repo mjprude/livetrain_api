@@ -103,11 +103,14 @@ class FeedWorker
       end
     end
 
-    puts "Total MTA Updates: #{@updated_trips}"
-    puts " Created trips: #{@num_created_trips}"
-    puts " Updated trips: #{@num_updated_trips}"
-    puts " Deleted trips: #{@deletions}"
-    puts "Start Time Upd: #{@start_times_updated}"
-    puts "      DB trips: #{Trip.all.count}"
+    f = File.open("#{Rails.root}/log/worker.log", "a+")
+      f.write("\n\n\nExecution time: #{Time.now}  /  #{Time.now.to_i}")
+      f.write("\nTotal MTA Updates: #{@updated_trips}")
+      f.write("\n Created trips: #{@num_created_trips}")
+      f.write("\n Updated trips: #{@num_updated_trips}")
+      f.write("\n Deleted trips: #{@deletions}")
+      f.write("\nStart Time Upd: #{@start_times_updated}")
+      f.write("\n      DB trips: #{Trip.all.count}")
+    f.close
   end
 end
