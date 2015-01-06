@@ -104,6 +104,8 @@ class FeedWorker
       end
     end
 
+
+
     f = File.open("#{Rails.root}/log/worker.log", "a+")
       f.write("\n\n\nExecution time: #{Time.now}  /  #{Time.now.to_i}")
       f.write("\nProcess Start Time: #{@process_start_time}")

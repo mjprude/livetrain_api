@@ -8,6 +8,6 @@ class ApiController < ApplicationController
   end
 
   def line
-    render josn: MTA::FeedParser.line(params[:route_id])
+    render json: MTA::FeedParser.line(params[:route_id])
   end
 end
