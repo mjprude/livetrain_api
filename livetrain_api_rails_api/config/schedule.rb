@@ -1,3 +1,5 @@
+#!/usr/bin/ruby
+
 # Use this file to easily define all of your cron jobs.
 #
 # It's helpful, but not entirely necessary to understand cron before proceeding.
@@ -53,7 +55,7 @@ class FeedRetriever
   end
 
   # *************** FEED RETRIEVAL PROCESS ******************
-  def feed
+  def self.feed
     # Get the raw data
     @transit_realtime_data = TransitRealtime::FeedMessage.parse(HTTParty.get("http://datamine.mta.info/mta_esi.php?key=#{ENV['MTA_REALTIME_API_KEY']}&feed_id=1")).to_hash
     ### Maybe come up with a way to handle situations where transit_realtime_data is not available?
@@ -126,8 +128,8 @@ class FeedRetriever
 end
 
 
-set :output, "#{Rails.root}/config/cron_log.log"
+set :output, "./cron_log.log"
 
-every 1.minute do
+every 5.minutes do
   runner "FeedRetriever.perform_async"
 end
