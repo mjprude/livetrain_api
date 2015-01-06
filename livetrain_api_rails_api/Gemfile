@@ -15,7 +15,8 @@ gem 'ruby-protocol-buffers'
 gem 'varint'
 gem 'sidekiq'
 gem 'redis'
-gem 'whenever', :require => false
+# gem 'whenever', :require => false
+gem 'clockwork'
 gem 'pry-rails', :group => :development
 
 # To use ActiveModel has_secure_password

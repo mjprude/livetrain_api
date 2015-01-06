@@ -31,7 +31,9 @@ GEM
     builder (3.2.2)
     celluloid (0.16.0)
       timers (~> 4.0.0)
-    chronic (0.10.2)
+    clockwork (1.1.0)
+      activesupport
+      tzinfo
     coderay (1.1.0)
     connection_pool (2.1.0)
     erubis (2.7.0)
@@ -113,13 +115,12 @@ GEM
       rack
       raindrops (~> 0.7)
     varint (0.1.0)
-    whenever (0.9.4)
-      chronic (>= 0.6.3)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
+  clockwork
   httparty
   pg
   pry-rails
@@ -131,4 +132,3 @@ DEPENDENCIES
   spring
   unicorn
   varint
-  whenever

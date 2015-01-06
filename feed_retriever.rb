@@ -16,6 +16,7 @@ require './models/stop.rb'
 loop do
   begin
 # ************ Helper Methods *************
+Trip.transaction do
     def create_stops_from_entity(entity, trip)
       entity[:trip_update][:stop_time_update].each do |stop_update|
         Stop.create({
@@ -109,7 +110,7 @@ loop do
         trip.destroy
       end
     end
-
+end
     puts "Total MTA Updates: #{@updated_trips}"
     puts " Created trips: #{@num_created_trips}"
     puts " Updated trips: #{@num_updated_trips}"
