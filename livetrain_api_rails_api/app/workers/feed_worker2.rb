@@ -6,7 +6,7 @@ require File.expand_path(Rails.root + 'lib/modules/feed', __FILE__)
 ActiveRecord::Base.establish_connection(ENV['DATABASE_URL'] || 'postgres://localhost/livetrain_api_development')
 
 
-class FeedWorker
+class FeedWorker2
   include Sidekiq::Worker
 
   def create_stops_from_entity(entity, trip)
@@ -41,6 +41,7 @@ class FeedWorker
 
   # *************** FEED RETRIEVAL PROCESS ******************
   def perform
+    sleep 30
     # Get the raw data
     @process_start_time = Time.now
     @transit_realtime_data = TransitRealtime::FeedMessage.parse(HTTParty.get("http://datamine.mta.info/mta_esi.php?key=#{ENV['MTA_REALTIME_API_KEY']}&feed_id=1")).to_hash
@@ -105,7 +106,7 @@ class FeedWorker
     end
 
     f = File.open("#{Rails.root}/log/worker.log", "a+")
-      f.write("\n\n\nExecution time: #{Time.now}  /  #{Time.now.to_i}")
+      f.write("\n\n\nExecution time: #{Time.now}  /  #{Time.now.to_i}  /  feed_worker2")
       f.write("\nProcess Start Time: #{@process_start_time}")
       f.write("\nTotal MTA Updates: #{@updated_trips}")
       f.write("\n Created trips: #{@num_created_trips}")

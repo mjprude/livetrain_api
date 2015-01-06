@@ -22,4 +22,5 @@ set :output, "./cron_log.log"
 
 every 1.minutes do
   runner "FeedWorker.perform_async"
+  runner "FeedWorker2.perform_async"
 end
