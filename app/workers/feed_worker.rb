@@ -3,7 +3,7 @@
 Dir[Rails.root + 'app/models/*.rb'].each{ |file| require file }
 require File.expand_path(Rails.root + 'lib/modules/feed', __FILE__)
 
-# ActiveRecord::Base.establish_connection(ENV['DATABASE_URL'] || 'postgres://localhost/livetrain_api_development')
+ActiveRecord::Base.establish_connection(ENV['DATABASE_URL'] || 'postgres://localhost/livetrain_api')
 
 
 class FeedWorker
@@ -41,6 +41,7 @@ class FeedWorker
 
   # *************** FEED RETRIEVAL PROCESS ******************
   def perform
+    ActiveRecord::Base.establish_connection({:password => 'stand_clear', :database => 'livetrain_api_production', :username => 'livetrain_api', :adapter => 'postgresql', :host => 'localhost'})
     # Get the raw data
     @process_start_time = Time.now
     @transit_realtime_data = TransitRealtime::FeedMessage.parse(HTTParty.get("http://datamine.mta.info/mta_esi.php?key=#{ENV['MTA_REALTIME_API_KEY']}&feed_id=1")).to_hash
