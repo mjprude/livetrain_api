@@ -3,7 +3,7 @@
 Dir[Rails.root + 'app/models/*.rb'].each{ |file| require file }
 require File.expand_path(Rails.root + 'lib/modules/feed', __FILE__)
 
-ActiveRecord::Base.establish_connection(ENV['DATABASE_URL'] || 'postgres://localhost/livetrain_api_development')
+# ActiveRecord::Base.establish_connection(ENV['DATABASE_URL'] || 'postgres://localhost/livetrain_api_development')
 
 
 class FeedWorker
