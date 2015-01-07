@@ -118,6 +118,8 @@ class FeedWorker
     f.write(payload)
     f.close
 
+    `find app/assets/MTA_feeds/ -name *.json -type f -mmin +3 -delete`
+
     f = File.open("#{Rails.root}/log/worker.log", "a+")
       f.write("\n\n\nProcess Start Time: #{@process_start_time}")
       f.write("\nTrip Update Time: #{@trip_update_execution_time}")
