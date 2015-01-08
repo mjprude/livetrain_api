@@ -4,8 +4,16 @@ class ApiController < ApplicationController
   end
 
   def update
-    f = File.read("#{Rails.root}" + '/app/assets/MTA_feeds/2015-01-06_17.16.13_realtime.json')
-    render json: JSON.parse(f)
+    begin
+      f = Dir.glob("#{Rails.root}/app/assets/MTA_feeds/*").max_by {|f| File.mtime(f)}
+      json = File.read(f)
+      render json: JSON.parse(json)
+    rescue
+      sleep 1
+      f = Dir.glob("#{Rails.root}/app/assets/MTA_feeds/*").max_by {|f| File.mtime(f)}
+      json = File.read(f)
+      render json: JSON.parse(json)
+    end
   end
 
   def line
