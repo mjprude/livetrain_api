@@ -19,4 +19,9 @@ class ApiController < ApplicationController
   def line
     render json: MTA::FeedParser.line(params[:route_id])
   end
+
+  def station
+    render json: JSON.generate(Stop.trips_by_station(params[:station_id]))
+  end
+
 end

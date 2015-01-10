@@ -8,10 +8,8 @@ class Stop < ActiveRecord::Base
       'northbound' => []
     }
   	upcoming_stops.each do |stop|
-      trip_id = stop.trip_id
-
       stop_info = {
-        'trip_id' => trip_id,
+        'trip_id' => stop.trip_id,
         'route' => Trip.find(trip_id).route,
         'timestamp' => stop.arrival_time,
         'min_till_train' => stop.min_till_arrival
