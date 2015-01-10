@@ -1,6 +1,6 @@
 #!/usr/bin/rubyrequire 'sidekiq'
 
-Dir[Rails.root + 'app/models/*.rb'].each{ |file| require file }
+# Dir[Rails.root + 'app/models/*.rb'].each{ |file| require file }
 require File.expand_path(Rails.root + 'lib/modules/feed', __FILE__)
 
 class FeedWorker
@@ -38,9 +38,9 @@ class FeedWorker
 
   # *************** FEED RETRIEVAL PROCESS ******************
   def perform
-    if ENV['RAILS_ENV'] == 'production'
-      ActiveRecord::Base.establish_connection({:password => ENV['LIVETRAIN_API_DATABASE_PASSWORD'], :database => 'livetrain_api_production', :username => 'livetrain_api', :adapter => 'postgresql', :host => 'localhost'})
-    end
+    # if ENV['RAILS_ENV'] == 'production'
+    #   ActiveRecord::Base.establish_connection({:password => ENV['LIVETRAIN_API_DATABASE_PASSWORD'], :database => 'livetrain_api_production', :username => 'livetrain_api', :adapter => 'postgresql', :host => 'localhost'})
+    # end
     # Get the raw data
     @process_start_time = Time.now
     @transit_realtime_data = TransitRealtime::FeedMessage.parse(HTTParty.get("http://datamine.mta.info/mta_esi.php?key=#{ENV['MTA_REALTIME_API_KEY']}&feed_id=1")).to_hash
