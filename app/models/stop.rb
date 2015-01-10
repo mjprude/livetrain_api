@@ -8,14 +8,17 @@ class Stop < ActiveRecord::Base
       'northbound' => []
     }
   	upcoming_stops.each do |stop|
+      trip_id = stop.trip_id
       stop_info = {
-        'trip_id' => stop.trip_id,
+        'trip_id' => trip_id,
         'route' => Trip.find(trip_id).route,
         'timestamp' => stop.arrival_time,
         'min_till_train' => stop.min_till_arrival
       }
       sorted_stops[stop.stop_id[-1] == 'S' ? 'southbound' : 'northbound'] << stop_info
   	end
+    sorted_stops['southbound'].sort! {|x, y| x['timestamp'].to_i <=> y['timestamp'].to_i }
+    sorted_stops['northbound'].sort! {|x, y| x['timestamp'].to_i <=> y['timestamp'].to_i }
     sorted_stops
   end
 
