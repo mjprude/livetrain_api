@@ -22,8 +22,8 @@ class Stop < ActiveRecord::Base
       sorted_stops[stop.stop_id[-1] == 'S' ? 'southbound' : 'northbound'] << stop_info
   	end
 
-    sorted_stops['southbound'] = limit_returns(sorted_stops['southbound'])
-    sorted_stops['northbound'] = limit_returns(sorted_stops['northbound'])
+    sorted_stops['southbound'] = limit_returns(sorted_stops['southbound'], 2)
+    sorted_stops['northbound'] = limit_returns(sorted_stops['northbound'], 2)
     sorted_stops
   end
 
@@ -31,11 +31,11 @@ class Stop < ActiveRecord::Base
     self.departure_time - Time.now.to_i > 0
   end
 
-  def self.limit_returns(potential_stops)
+  def self.limit_returns(potential_stops, stop_limit)
     route_counts = Hash.new(0)
     potential_stops.select do |stop|
       route_counts[stop['route']] += 1
-      route_counts[stop['route']] < 4
+      route_counts[stop['route']] < (stop_limit + 1)
     end
   end
 
