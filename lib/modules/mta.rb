@@ -49,7 +49,9 @@ module MTA
   class FeedParser
 
     def self.raw_feed
-      File.read(find_most_recent_file)
+      require "#{Rails.root}/lib/assets/mta_assets/gtfs-realtime.pb.rb"
+      require "#{Rails.root}/lib/assets/mta_assets/nyct-subway.pb.rb"
+      JSON.generate(@transit_realtime_data = TransitRealtime::FeedMessage.parse(HTTParty.get("http://datamine.mta.info/mta_esi.php?key=#{ENV['MTA_REALTIME_API_KEY']}&feed_id=1")).to_hash)
     end
 
     def self.feed

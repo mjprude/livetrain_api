@@ -1,5 +1,6 @@
 class ApiController < ApplicationController
   def raw
+    require "#{Rails.root}/lib/modules/mta.rb"
     render json: MTA::FeedParser.raw_feed
   end
 
@@ -19,4 +20,9 @@ class ApiController < ApplicationController
   def line
     render json: MTA::FeedParser.line(params[:route_id])
   end
+
+  def station
+    render json: JSON.generate(Stop.trips_by_station(params[:station_id]))
+  end
+
 end
