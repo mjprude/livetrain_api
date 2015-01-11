@@ -4,7 +4,7 @@ Rails.application.routes.draw do
     get 'raw' => 'api#raw'
     get 'update' => 'api#update'
     get 'line/:route_id' => 'api#line'
-    get 'station/:station_id' => 'api#station'
+    get 'station' => 'api#station'
   end
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

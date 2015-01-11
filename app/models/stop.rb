@@ -4,21 +4,31 @@ class Stop < ActiveRecord::Base
   def self.trips_by_station(station)
   	upcoming_stops = self.where("stop_id LIKE ?", "#{station}%").select {|stop| stop.arrival_time && stop.future_trip? }
   	sorted_stops = {
-      'southbound' => [],
-      'northbound' => []
+      'station_number' => station,
+      'southbound' => {
+        'local' => [],
+        'express' => []
+        },
+      'northbound' => {
+        'local' => [],
+        'express' => []
+      }
     }
   	upcoming_stops.each do |stop|
       trip_id = stop.trip_id
+      route = Trip.find(trip_id).route
       stop_info = {
         'trip_id' => trip_id,
-        'route' => Trip.find(trip_id).route,
+        'route' => route,
         'timestamp' => stop.arrival_time,
         'min_till_train' => stop.min_till_arrival
       }
-      sorted_stops[stop.stop_id[-1] == 'S' ? 'southbound' : 'northbound'] << stop_info
+      sorted_stops[stop.stop_id[-1] == 'S' ? 'southbound' : 'northbound'][['1', '6'].include?(route) ? 'local' : 'express' ] << stop_info
   	end
-    sorted_stops['southbound'].sort! {|x, y| x['timestamp'].to_i <=> y['timestamp'].to_i }
-    sorted_stops['northbound'].sort! {|x, y| x['timestamp'].to_i <=> y['timestamp'].to_i }
+    sorted_stops['southbound']['local'].sort! {|x, y| x['timestamp'].to_i <=> y['timestamp'].to_i }
+    sorted_stops['southbound']['express'].sort! {|x, y| x['timestamp'].to_i <=> y['timestamp'].to_i }
+    sorted_stops['northbound']['local'].sort! {|x, y| x['timestamp'].to_i <=> y['timestamp'].to_i }
+    sorted_stops['northbound']['express'].sort! {|x, y| x['timestamp'].to_i <=> y['timestamp'].to_i }
     sorted_stops
   end
 

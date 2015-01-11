@@ -1,5 +1,6 @@
 class ApiController < ApplicationController
   def raw
+    require "#{Rails.root}/lib/modules/mta.rb"
     render json: MTA::FeedParser.raw_feed
   end
 
