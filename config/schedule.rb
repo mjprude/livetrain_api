@@ -34,7 +34,7 @@ module Clockwork
     f.close
   end
 
-  every 60.seconds, 'feed_worker' do
+  every 30.seconds, 'feed_worker' do
     FeedWorker.perform_async
   end
 end
