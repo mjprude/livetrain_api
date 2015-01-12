@@ -18,6 +18,7 @@ class Stop < ActiveRecord::Base
       time, shape_id = matching_trip.mta_trip_id.split('_')
       stop_info = {
         'trip_id' => matching_trip.id,
+        'stop_id' => stop.id,
         'route' => route,
         'timestamp' => stop.departure_time,
         'destination' => @destinations[shape_id[0..5]] == nil ? nil : @destinations[shape_id[0..5]].split(' ').map{|word| word.capitalize}.join(' '),
@@ -26,8 +27,8 @@ class Stop < ActiveRecord::Base
       sorted_stops[stop.stop_id[-1] == 'S' ? 'southbound' : 'northbound'] << stop_info
   	end
 
-    sorted_stops['southbound'] = limit_returns(sorted_stops['southbound'], 2)
-    sorted_stops['northbound'] = limit_returns(sorted_stops['northbound'], 2)
+    sorted_stops['southbound'] = limit_returns(sorted_stops['southbound'], 3)
+    sorted_stops['northbound'] = limit_returns(sorted_stops['northbound'], 3)
     sorted_stops
   end
 
