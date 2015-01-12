@@ -54,6 +54,7 @@ module DBHelper
       if trip.length == 1
         #handle shuttles and ignore the rest
       else
+        next if trip[0]['departure_time'].to_i > Time.now.to_i
         last_stop = trip[0]
         stop1 = trip[1]
         stop2 = trip[2]
