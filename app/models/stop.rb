@@ -22,7 +22,6 @@ class Stop < ActiveRecord::Base
         'route' => route.gsub('X', ''),
         'timestamp' => stop.departure_time,
         'destination' => @destinations[shape_id[0..5]] == nil ? nil : @destinations[shape_id[0..5]].split(' ').map{|word| word.capitalize}.join(' '),
-        'min_till_train' => stop.min_till_train
       }
       sorted_stops[stop.stop_id[-1] == 'S' ? 'southbound' : 'northbound'] << stop_info
   	end
