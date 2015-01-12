@@ -30,6 +30,41 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
+-- Name: route_shapes; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE route_shapes (
+    id integer NOT NULL,
+    route_id character varying(255),
+    service_id character varying(255),
+    trip_id character varying(255),
+    headsign character varying(255),
+    shape_id character varying(255),
+    created_at timestamp without time zone,
+    updated_at timestamp without time zone
+);
+
+
+--
+-- Name: route_shapes_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE route_shapes_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: route_shapes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE route_shapes_id_seq OWNED BY route_shapes.id;
+
+
+--
 -- Name: schema_migrations; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -128,6 +163,13 @@ ALTER SEQUENCE trips_id_seq OWNED BY trips.id;
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY route_shapes ALTER COLUMN id SET DEFAULT nextval('route_shapes_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY stops ALTER COLUMN id SET DEFAULT nextval('stops_id_seq'::regclass);
 
 
@@ -136,6 +178,14 @@ ALTER TABLE ONLY stops ALTER COLUMN id SET DEFAULT nextval('stops_id_seq'::regcl
 --
 
 ALTER TABLE ONLY trips ALTER COLUMN id SET DEFAULT nextval('trips_id_seq'::regclass);
+
+
+--
+-- Name: route_shapes_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY route_shapes
+    ADD CONSTRAINT route_shapes_pkey PRIMARY KEY (id);
 
 
 --
@@ -190,4 +240,6 @@ INSERT INTO schema_migrations (version) VALUES ('20141226155713');
 INSERT INTO schema_migrations (version) VALUES ('20141226155759');
 
 INSERT INTO schema_migrations (version) VALUES ('20150104152001');
+
+INSERT INTO schema_migrations (version) VALUES ('20150111212038');
 

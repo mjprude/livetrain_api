@@ -2,6 +2,8 @@ class Stop < ActiveRecord::Base
   belongs_to :trip
 
   def self.trips_by_station(station)
+    @destinations = JSON.parse(File.read(Rails.root + 'app/assets/static_MTA/uniq_route_shapes.txt'))
+
   	upcoming_stops = self.where("stop_id LIKE ?", "#{station}%").select {|stop| stop.departure_time && stop.future_trip? }
     upcoming_stops.sort! { |x, y| x.departure_time <=> y.departure_time }
   	sorted_stops = {
@@ -11,12 +13,14 @@ class Stop < ActiveRecord::Base
     }
 
   	upcoming_stops.each do |stop|
-      trip_id = stop.trip_id
-      route = Trip.find(trip_id).route
+      matching_trip = Trip.find(stop.trip_id)
+      route = matching_trip.route
+      time, shape_id = matching_trip.mta_trip_id.split('_')
       stop_info = {
-        'trip_id' => trip_id,
+        'trip_id' => matching_trip.id,
         'route' => route,
         'timestamp' => stop.departure_time,
+        'destination' => @destinations[shape_id[0..5]] == nil ? nil : @destinations[shape_id[0..5]].split(' ').map{|word| word.capitalize}.join(' '),
         'min_till_train' => stop.min_till_train
       }
       sorted_stops[stop.stop_id[-1] == 'S' ? 'southbound' : 'northbound'] << stop_info

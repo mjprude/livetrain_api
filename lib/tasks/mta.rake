@@ -4,6 +4,23 @@ require File.expand_path(Rails.root + 'lib/modules/feed', __FILE__)
 ActiveRecord::Base.establish_connection(ENV['DATABASE_URL'] || 'postgres://localhost/livetrain_api_development')
 
 namespace :mta do
+  desc 'seed route_shapes'
+  task :route_shapes do
+    @counter = 0
+    File.foreach(Rails.root + 'app/assets/static_MTA/trips.txt') do |line|
+      @counter += 1
+      if @counter > 1
+        route_id, service_id, trip_id, trip_headsign, direction_id, block_id, shape_id = line.split(',')
+        RouteShape.create({
+          route_id: route_id,
+          service_id: service_id,
+          trip_id: trip_id,
+          headsign: trip_headsign,
+          shape_id: shape_id.chomp
+        })
+      end
+    end
+  end
 
   ##########################################################
   # Use this task to retrieve MTA feed data
