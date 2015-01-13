@@ -88,14 +88,17 @@ class MTAUpdate
   end
 
   def update_existing_stops(entity, trip)
+    updated_stops = {}
+    existing_stops = trip.stops
     entity[:trip_update][:stop_time_update].each do |stop_update|
-      if stop = trip.stops.find_by({stop_id: MTA::Stop.stop_id(stop_update)})
-        stop.update({
+      if stop = existing_stops.find { |stop| stop.stop_id == MTA::Stop.stop_id(stop_update) }
+        updated_stops[stop.id] = {
           arrival_time: MTA::Stop.arrival_time(stop_update),
           departure_time: MTA::Stop.departure_time(stop_update),
-        })
+        }
       end
     end
+    Stop.update(updated_stops.keys, updated_stops.values)
   end
 
   def new_trip_start_time(feed_entity)
