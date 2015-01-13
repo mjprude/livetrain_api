@@ -78,7 +78,7 @@ class RouteShape < ActiveRecord::Base
 	end
 
 	def self.write_json_with_trips
-		f = File.open(Rails.root + 'app/assets/static_MTA/uniq_route_shapes.txt', 'w')
+		f = File.open(Rails.root + 'app/assets/static_MTA/uniq_route_shapes.json', 'w')
 		f.write(get_headsigns_by_all_base_shapes.to_json)
 		f.close
 	end

@@ -2,7 +2,7 @@ class Stop < ActiveRecord::Base
   belongs_to :trip
 
   def self.trips_by_station(station)
-    @destinations = JSON.parse(File.read(Rails.root + 'app/assets/static_MTA/uniq_route_shapes.txt'))
+    @destinations = JSON.parse(File.read(Rails.root + 'app/assets/static_MTA/uniq_route_shapes.json'))
 
   	upcoming_stops = self.where("stop_id LIKE ?", "#{station}%").select {|stop| stop.departure_time && stop.future_trip? }
     upcoming_stops.sort! { |x, y| x.departure_time <=> y.departure_time }
