@@ -47,7 +47,7 @@ module DBHelper
     ActiveRecord::Base.connection.execute(query)
   end
 
-  def self.update_json
+  def self.update_json(master_stops, master_routes)
     trips_array = execute_sql.group_by{ |row| row['mta_trip_id'] }.values
 
     trips_array.each_with_object([]) do |trip, json_ary|
@@ -72,7 +72,7 @@ module DBHelper
           lastDeparture: last_stop['departure_time'],
 
           stop1: stop1['stop_id'],
-          path1: Shapes.get_path(stop1['route'], last_stop['stop_id'], stop1['stop_id']),
+          path1: Shapes.get_path(stop1['route'], last_stop['stop_id'], stop1['stop_id'], master_stops, master_routes),
           arrival1: stop1['arrival_time'],
           departure1: stop1['departure_time'],
 
@@ -83,14 +83,14 @@ module DBHelper
 
         if stop2
           route_obj[:stop2] = stop2['stop_id']
-          route_obj[:path2] = Shapes.get_path(stop1['route'], stop1['stop_id'], stop2['stop_id'])
+          route_obj[:path2] = Shapes.get_path(stop1['route'], stop1['stop_id'], stop2['stop_id'], master_stops, master_routes)
           route_obj[:arrival2] = stop2['arrival_time']
           route_obj[:departure2] = stop2['departure_time']
         end
 
         if stop3
           route_obj[:stop3] = stop3['stop_id']
-          route_obj[:path3] = Shapes.get_path(stop1['route'], stop2['stop_id'], stop3['stop_id'])
+          route_obj[:path3] = Shapes.get_path(stop1['route'], stop2['stop_id'], stop3['stop_id'], master_stops, master_routes)
           route_obj[:arrival3] = stop3['arrival_time']
           route_obj[:departure3] = stop3['departure_time']
         end
