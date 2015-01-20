@@ -10,11 +10,12 @@ The primary goal of this project is to, with as much accuracy as possible, map o
 This project was conceived, developed, and maintained by Michael Prude and Ted Mahoney as their final project for the Web Development Intensive Course at General Assembly, a 12-week program in full-stack development.
 
 ## Technologies Used
-- Ruby
-- Sinatra
+- Ruby 2.1.2
+- Rails/Rails-API 4.1.7
 - D3
 - Leaflet/Mapbox
 - Google Protocol Buffers
+- Ruby Protocol Buffers
 
 ## Using MTA real-time arrival data
 The MTA provides it's real-time subway arrival data in a google protocol buffer format. To use this, follow the instructions below:
