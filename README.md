@@ -16,6 +16,10 @@ This project was conceived, developed, and maintained by Michael Prude and Ted M
 - Leaflet/Mapbox
 - Google Protocol Buffers
 - Ruby Protocol Buffers
+- Sidekiq
+- Redis
+- Clockwork
+- PostgreSQL
 
 ## Using MTA real-time arrival data
 The MTA provides it's real-time subway arrival data in a google protocol buffer format. To use this, follow the instructions below:
