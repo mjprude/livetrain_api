@@ -21,3 +21,23 @@ class CreateViewStopsByTrip < ActiveRecord::Migration
     SQL
   end
 end
+
+
+ def self.up
+    execute <<-SQL
+      CREATE VIEW stops_by_trip_test AS
+      SELECT
+        trips.mta_trip_id,
+        trips.route,
+        trips.direction,
+        trips.mta_timestamp,
+        stops.stop_id,
+        stops.departure_time,
+        stops.arrival_time
+      FROM trips
+
+      INNER JOIN stops
+      ON stops.trip_id = trips.id
+      WHERE trips.route like '1'
+    SQL
+  end
