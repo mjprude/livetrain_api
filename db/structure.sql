@@ -110,7 +110,7 @@ CREATE TABLE trips (
 --
 
 CREATE VIEW stops_by_trip AS
- SELECT trips.mta_trip_id,
+ SELECT trips.id,
     trips.route,
     trips.direction,
     trips.mta_timestamp,
@@ -240,4 +240,6 @@ INSERT INTO schema_migrations (version) VALUES ('20141226155713');
 INSERT INTO schema_migrations (version) VALUES ('20141226155759');
 
 INSERT INTO schema_migrations (version) VALUES ('20150111212038');
+
+INSERT INTO schema_migrations (version) VALUES ('20150126225917');
 

@@ -9,7 +9,7 @@ module DBHelper
       WHERE departure_time = (
          SELECT MAX(departure_time) FROM stops_by_trip y
          WHERE departure_time BETWEEN 0 AND #{current_time}
-         AND x.mta_trip_id = y.mta_trip_id
+         AND x.id = y.id
       )
       UNION ALL
       SELECT * FROM stops_by_trip x
@@ -17,7 +17,7 @@ module DBHelper
          SELECT MIN(arrival_time) FROM stops_by_trip y
          WHERE arrival_time IS NOT NULL
          AND arrival_time > #{current_time}
-         AND x.mta_trip_id = y.mta_trip_id
+         AND x.id = y.id
       )
       UNION ALL
       SELECT * FROM stops_by_trip x
@@ -25,7 +25,7 @@ module DBHelper
          SELECT arrival_time FROM stops_by_trip y
          WHERE arrival_time IS NOT NULL
          AND arrival_time > #{current_time}
-         AND x.mta_trip_id = y.mta_trip_id
+         AND x.id = y.id
          ORDER BY arrival_time ASC
          LIMIT 1 OFFSET 1
       )
@@ -35,11 +35,11 @@ module DBHelper
          SELECT arrival_time FROM stops_by_trip y
          WHERE arrival_time IS NOT NULL
          AND arrival_time > #{current_time}
-         AND x.mta_trip_id = y.mta_trip_id
+         AND x.id = y.id
          ORDER BY arrival_time ASC
          LIMIT 1 OFFSET 2
       )
-      ORDER BY mta_trip_id, departure_time;
+      ORDER BY id, departure_time;
     SQL
   end
 
@@ -48,7 +48,7 @@ module DBHelper
   end
 
   def self.update_json(master_stops, master_routes)
-    trips_array = execute_sql.group_by{ |row| row['mta_trip_id'] }.values
+    trips_array = execute_sql.group_by{ |row| row['id'] }.values
 
     trips_array.each_with_object([]) do |trip, json_ary|
       if trip.length == 1
@@ -63,7 +63,7 @@ module DBHelper
         trip3Complete = (stop3 == nil)
 
         route_obj = {
-          trip_id: 't' + stop1['mta_trip_id'].gsub('.', '_'),
+          trip_id: stop1['id'],
           route: stop1['route'],
           direction: stop1['direction'],
           updated: stop1['mta_timestamp'],
