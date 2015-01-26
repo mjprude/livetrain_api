@@ -43,9 +43,5 @@ class Stop < ActiveRecord::Base
     end
   end
 
-  def min_till_train
-    (self.departure_time - Time.now.to_i) / 60
-  end
-
 
 end

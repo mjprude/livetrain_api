@@ -25,4 +25,8 @@ class ApiController < ApplicationController
     render json: JSON.generate(Stop.trips_by_station(params[:station_id]))
   end
 
+  def train
+    render json: JSON.generate(Trip.send_info(params[:train_id]))
+  end
+
 end
