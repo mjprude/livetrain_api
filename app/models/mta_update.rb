@@ -126,23 +126,22 @@ class MTAUpdate
   end
 
   def update_existing_trip(entity, existing_trip)
-    unless existing_trip.mta_timestamp == @feed_timestamp
-      if existing_trip.start_time > @feed_timestamp
-        existing_trip.update({
-          mta_timestamp: @feed_timestamp,
-          stops_remaining: MTA::Entity.stops_remaining(entity),
-          start_time: MTA::Stop.departure_time(entity[:trip_update][:stop_time_update][0]) ? MTA::Stop.departure_time(entity[:trip_update][:stop_time_update][0]) : @feed_timestamp
-          })
+    return nil if existing_trip.mta_timestamp == @feed_timestamp
+    if existing_trip.start_time > @feed_timestamp
+      existing_trip.update({
+        mta_timestamp: @feed_timestamp,
+        stops_remaining: MTA::Entity.stops_remaining(entity),
+        start_time: MTA::Stop.departure_time(entity[:trip_update][:stop_time_update][0]) ? MTA::Stop.departure_time(entity[:trip_update][:stop_time_update][0]) : @feed_timestamp
+        })
 
-        @start_times_updated += 1
-      else
-        existing_trip.update({
-          mta_timestamp: @feed_timestamp,
-          stops_remaining: MTA::Entity.stops_remaining(entity),
-          })
-      end
-      update_existing_stops(entity, existing_trip)
-      @num_updated_trips += 1
+      @start_times_updated += 1
+    else
+      existing_trip.update({
+        mta_timestamp: @feed_timestamp,
+        stops_remaining: MTA::Entity.stops_remaining(entity),
+        })
     end
+    update_existing_stops(entity, existing_trip)
+    @num_updated_trips += 1
   end
 end
