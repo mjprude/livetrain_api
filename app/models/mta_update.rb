@@ -38,8 +38,8 @@ class MTAUpdate
         end
       end
 
-      all_trips.each(&:save!)
-      all_stops.flatten.each(&:save!)
+      all_trips.compact.each(&:save!)
+      all_stops.flatten.compact.each(&:save!)
     end
   end
 
