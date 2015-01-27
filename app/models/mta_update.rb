@@ -5,8 +5,12 @@ class MTAUpdate
     @process_start_time = Time.now
 
     mta_api_response = HTTParty.get("http://datamine.mta.info/mta_esi.php?key=#{ENV['MTA_REALTIME_API_KEY']}&feed_id=1")
+    l_train_response = HTTParty.get("http://datamine.mta.info/mta_esi.php?key=#{ENV['MTA_REALTIME_API_KEY']}&feed_id=2")
 
     @transit_realtime_data = TransitRealtime::FeedMessage.parse(mta_api_response).to_hash
+    l_data = TransitRealtime::FeedMessage.parse(l_train_response).to_hash
+    @transit_realtime_data[:entity] += l_data[:entity]
+
     @feed_timestamp = MTA::Feed.mta_timestamp(@transit_realtime_data)
 
     # for logging
