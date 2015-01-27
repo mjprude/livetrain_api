@@ -50,10 +50,8 @@ module DBHelper
   def self.update_json(master_stops, master_routes)
     trips_array = execute_sql.group_by{ |row| row['mta_trip_id'] }.values
     trips_array.each_with_object([]) do |trip, json_ary|
-      if trip.length == 1
-        #handle shuttles and ignore the rest
-        # binding.pry
-        next unless trip[0]['route'] == 'GS'
+      next if trip.length == 1
+      if trip[0]['route'] == 'GS'
         last_stop = trip[0]
         stop1 = trip[1]
         route_obj = {
@@ -66,7 +64,7 @@ module DBHelper
           stop1: stop1['stop_id'],
           path1: Shapes.get_path(stop1['route'], last_stop['stop_id'], stop1['stop_id'], master_stops, master_routes),
           arrival1: stop1['arrival_time'],
-          departure1: 'null',
+          departure1: nil,
           trip1Complete: false
         }
         json_ary << route_obj
