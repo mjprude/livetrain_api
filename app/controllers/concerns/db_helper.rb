@@ -8,7 +8,7 @@ module DBHelper
       SELECT * FROM stops_by_trip x
       WHERE departure_time = (
          SELECT MAX(departure_time) FROM stops_by_trip y
-         WHERE departure_time BETWEEN 0 AND #{current_time}
+         WHERE departure_time BETWEEN 0 AND #{current_time + 30}
          AND x.mta_trip_id = y.mta_trip_id
       )
       UNION ALL
@@ -49,10 +49,27 @@ module DBHelper
 
   def self.update_json(master_stops, master_routes)
     trips_array = execute_sql.group_by{ |row| row['mta_trip_id'] }.values
-
     trips_array.each_with_object([]) do |trip, json_ary|
       if trip.length == 1
         #handle shuttles and ignore the rest
+        # binding.pry
+        next unless trip[0]['route'] == 'GS'
+        last_stop = trip[0]
+        stop1 = trip[1]
+        route_obj = {
+          trip_id: 't' + stop1['mta_trip_id'].gsub('.', '_'),
+          route: stop1['route'],
+          direction: stop1['direction'],
+          updated: stop1['mta_timestamp'],
+          lastStop: last_stop['stop_id'],
+          lastDeparture: last_stop['departure_time'],
+          stop1: stop1['stop_id'],
+          path1: Shapes.get_path(stop1['route'], last_stop['stop_id'], stop1['stop_id'], master_stops, master_routes),
+          arrival1: stop1['arrival_time'],
+          departure1: 'null',
+          trip1Complete: false
+        }
+        json_ary << route_obj
       else
         next if trip[0]['departure_time'].to_i > Time.now.to_i
         last_stop = trip[0]
@@ -102,4 +119,4 @@ module DBHelper
 end
 
 
-# SELECT * FROM stops_by_trip x WHERE departure_time = ( SELECT MAX(departure_time) FROM stops_by_trip y WHERE departure_time BETWEEN 0 AND 1419294150 AND x.mta_trip_id = y.mta_trip_id ) UNION ALL SELECT * FROM stops_by_trip x WHERE arrival_time = ( SELECT MIN(arrival_time) FROM stops_by_trip y WHERE arrival_time IS NOT NULL AND arrival_time > 1419294150 AND x.mta_trip_id = y.mta_trip_id ) UNION ALL SELECT * FROM stops_by_trip x WHERE arrival_time = ( SELECT arrival_time FROM stops_by_trip y WHERE arrival_time IS NOT NULL AND arrival_time > 1419294150 AND x.mta_trip_id = y.mta_trip_id ORDER BY arrival_time ASC LIMIT 1 OFFSET 1 ) UNION ALL SELECT * FROM stops_by_trip x WHERE arrival_time = ( SELECT arrival_time FROM stops_by_trip y WHERE arrival_time IS NOT NULL AND arrival_time > 1419294150 AND x.mta_trip_id = y.mta_trip_id ORDER BY arrival_time ASC LIMIT 1 OFFSET 2 ) ORDER BY mta_trip_id, departure_time;
+
