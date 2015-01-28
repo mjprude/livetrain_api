@@ -22,7 +22,7 @@ class Trip < ActiveRecord::Base
       route: train.route,
       direction: train.direction,
       stops: stops,
-      destination: @destinations[shape_id[0..5]] == nil ? nil : @destinations[shape_id[0..5]].split(' ').map{|word| word.capitalize}.join(' ')
+      destination: @destinations[shape_id[0..5]] == nil ? "Modified Service" : @destinations[shape_id[0..5]].split(' ').map{|word| word.capitalize}.join(' ')
     }
   end
 
