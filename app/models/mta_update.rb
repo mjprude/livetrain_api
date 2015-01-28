@@ -5,8 +5,12 @@ class MTAUpdate
     @process_start_time = Time.now
 
     mta_api_response = HTTParty.get("http://datamine.mta.info/mta_esi.php?key=#{ENV['MTA_REALTIME_API_KEY']}&feed_id=1")
+    l_train_response = HTTParty.get("http://datamine.mta.info/mta_esi.php?key=#{ENV['MTA_REALTIME_API_KEY']}&feed_id=2")
 
     @transit_realtime_data = TransitRealtime::FeedMessage.parse(mta_api_response).to_hash
+    l_data = TransitRealtime::FeedMessage.parse(l_train_response).to_hash
+    @transit_realtime_data[:entity] += l_data[:entity]
+
     @feed_timestamp = MTA::Feed.mta_timestamp(@transit_realtime_data)
 
     # for logging
@@ -34,8 +38,8 @@ class MTAUpdate
         end
       end
 
-      all_trips.each(&:save!)
-      all_stops.flatten.each(&:save!)
+      all_trips.compact.each(&:save!)
+      all_stops.flatten.compact.each(&:save!)
     end
   end
 
@@ -126,23 +130,22 @@ class MTAUpdate
   end
 
   def update_existing_trip(entity, existing_trip)
-    unless existing_trip.mta_timestamp == @feed_timestamp
-      if existing_trip.start_time > @feed_timestamp
-        existing_trip.update({
-          mta_timestamp: @feed_timestamp,
-          stops_remaining: MTA::Entity.stops_remaining(entity),
-          start_time: MTA::Stop.departure_time(entity[:trip_update][:stop_time_update][0]) ? MTA::Stop.departure_time(entity[:trip_update][:stop_time_update][0]) : @feed_timestamp
-          })
+    return nil if existing_trip.mta_timestamp == @feed_timestamp
+    if existing_trip.start_time > @feed_timestamp
+      existing_trip.update({
+        mta_timestamp: @feed_timestamp,
+        stops_remaining: MTA::Entity.stops_remaining(entity),
+        start_time: MTA::Stop.departure_time(entity[:trip_update][:stop_time_update][0]) ? MTA::Stop.departure_time(entity[:trip_update][:stop_time_update][0]) : @feed_timestamp
+        })
 
-        @start_times_updated += 1
-      else
-        existing_trip.update({
-          mta_timestamp: @feed_timestamp,
-          stops_remaining: MTA::Entity.stops_remaining(entity),
-          })
-      end
-      update_existing_stops(entity, existing_trip)
-      @num_updated_trips += 1
+      @start_times_updated += 1
+    else
+      existing_trip.update({
+        mta_timestamp: @feed_timestamp,
+        stops_remaining: MTA::Entity.stops_remaining(entity),
+        })
     end
+    update_existing_stops(entity, existing_trip)
+    @num_updated_trips += 1
   end
 end

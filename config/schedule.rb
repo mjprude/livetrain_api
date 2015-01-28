@@ -3,30 +3,8 @@ require 'clockwork'
 require "./config/boot"
 require "./config/environment"
 require './app/workers/feed_worker'
-# Use this file to easily define all of your cron jobs.
-#
-# It's helpful, but not entirely necessary to understand cron before proceeding.
-# http://en.wikipedia.org/wiki/Cron
+require './app/workers/db_flush'
 
-# Example:
-#
-#
-
-#
-# every 4.days do
-#   runner "AnotherModel.prune_old_records"
-# end
-
-# Learn more: http://github.com/javan/whenever
-
-
-
-# set :output, "./cron_log.log"
-
-# every 1.minutes do
-#   runner "FeedWorker.perform_async"
-#   runner "FeedWorker2.perform_async"
-# end
 module Clockwork
   handler do |job|
     f = File.open("./log/worker.log", "a+")
@@ -36,5 +14,9 @@ module Clockwork
 
   every 60.seconds, 'feed_worker' do
     FeedWorker.perform_async
+  end
+
+  every(1.day, 'flush_database', :at => '04:00') do
+    DBFlush.perform_async
   end
 end
