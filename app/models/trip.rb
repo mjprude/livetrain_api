@@ -5,7 +5,7 @@ class Trip < ActiveRecord::Base
     train = Trip.find(train_id)
 
     stops = []
-    train.stops.order(:arrival_time).each do |stop|
+    train.stops.order(:departure_time).each do |stop|
       stops << {
         mta_stop_id: stop.stop_id[0..-2],
         arrival_time: stop.arrival_time,

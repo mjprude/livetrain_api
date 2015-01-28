@@ -56,7 +56,7 @@ module DBHelper
         last_stop = trip[0]
         stop1 = trip[1]
         route_obj = {
-          trip_id: 't' + stop1['mta_trip_id'].gsub('.', '_'),
+          trip_id: stop1['id'],
           route: stop1['route'],
           direction: stop1['direction'],
           updated: stop1['mta_timestamp'],
