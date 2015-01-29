@@ -122,6 +122,23 @@ CREATE VIEW stops_by_trip AS
 
 
 --
+-- Name: stops_by_trip_test; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW stops_by_trip_test AS
+ SELECT trips.mta_trip_id,
+    trips.route,
+    trips.direction,
+    trips.mta_timestamp,
+    stops.stop_id,
+    stops.departure_time,
+    stops.arrival_time
+   FROM (trips
+     JOIN stops ON ((stops.trip_id = trips.id)))
+  WHERE ((trips.route)::text ~~ '1'::text);
+
+
+--
 -- Name: stops_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
@@ -238,6 +255,8 @@ INSERT INTO schema_migrations (version) VALUES ('20141226024524');
 INSERT INTO schema_migrations (version) VALUES ('20141226155713');
 
 INSERT INTO schema_migrations (version) VALUES ('20141226155759');
+
+INSERT INTO schema_migrations (version) VALUES ('20150104152001');
 
 INSERT INTO schema_migrations (version) VALUES ('20150111212038');
 
