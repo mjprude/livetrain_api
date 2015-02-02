@@ -97,7 +97,8 @@ module Feed
 
     # Delete completed trips from the db
     @deletions = 0
-    Trip.where('stops_remaining < ?', 3).each do |trip|
+    # Trip.where('stops_remaining < ?', 3).each do |trip|
+    Trip.each do |trip|
       if Time.now.to_i > trip.mta_timestamp + 120
         @deletions += 1
         trip.destroy
