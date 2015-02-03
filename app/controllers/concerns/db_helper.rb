@@ -3,12 +3,12 @@ module DBHelper
   require File.expand_path(Rails.root + 'lib/modules/shapes', __FILE__)
 
   def self.query
-    current_time = Time.now.to_i + 30
+    current_time = Time.now.to_i
     <<-SQL
       SELECT * FROM stops_by_trip x
       WHERE departure_time = (
          SELECT MAX(departure_time) FROM stops_by_trip y
-         WHERE departure_time BETWEEN #{current_time - 300} AND #{current_time}
+         WHERE departure_time BETWEEN #{current_time - 600} AND #{current_time}
          AND x.id = y.id
       )
       UNION ALL
@@ -52,7 +52,6 @@ module DBHelper
 
     trips_array.each_with_object([]) do |trip, json_ary|
       next if trip.length == 1
-      next if trip[0]['departure_time'].to_i > Time.now.to_i + 30
       if trip[0]['route'] == 'GS'
         last_stop = trip[0]
         stop1 = trip[1]
@@ -71,6 +70,7 @@ module DBHelper
         }
         json_ary << route_obj
       else
+        # next if trip[0]['departure_time'].to_i > Time.now.to_i
         last_stop = trip[0]
         stop1 = trip[1]
         stop2 = trip[2]
