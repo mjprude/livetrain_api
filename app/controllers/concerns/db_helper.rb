@@ -49,8 +49,8 @@ module DBHelper
 
   def self.update_json(master_stops, master_routes)
     trips_array = execute_sql.group_by{ |row| row['id'] }.values
-
     trips_array.each_with_object([]) do |trip, json_ary|
+      next if trip[0]['departure_time'].to_i > Time.now.to_i
       next if trip.length == 1
       if trip[0]['route'] == 'GS'
         last_stop = trip[0]
@@ -70,7 +70,6 @@ module DBHelper
         }
         json_ary << route_obj
       else
-        # next if trip[0]['departure_time'].to_i > Time.now.to_i
         last_stop = trip[0]
         stop1 = trip[1]
         stop2 = trip[2]
