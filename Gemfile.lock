@@ -45,7 +45,7 @@ GEM
       json (~> 1.8)
       multi_xml (>= 0.5.2)
     i18n (0.7.0)
-    json (1.8.1)
+    json (1.8.6)
     mail (2.6.3)
       mime-types (>= 1.16, < 3)
     method_source (0.8.2)
@@ -123,6 +123,7 @@ PLATFORMS
 DEPENDENCIES
   clockwork
   httparty
+  json (= 1.8.6)
   pg
   pry-rails
   rack-cors
@@ -134,3 +135,6 @@ DEPENDENCIES
   spring
   thin
   varint
+
+BUNDLED WITH
+   1.16.1

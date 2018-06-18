@@ -19,6 +19,7 @@ gem 'redis'
 gem 'clockwork'
 gem 'pry-rails', :group => :development
 
+gem 'json', '1.8.6'
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.1.2'
 
