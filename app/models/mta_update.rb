@@ -51,17 +51,8 @@ class MTAUpdate
   end
 
   def write_json
-    current_time = Time.now
-    date, time, zone = current_time.to_s.split(' ')
-
-    string = "#{Rails.root}" + "/app/assets/MTA_feeds/" + date + '_' + time.gsub(':', '.') + "_realtime.json"
-
     payload = DBHelper::update_json(MTAUpdate.master_stops, MTAUpdate.master_routes)
-    f = File.open(string, 'a+')
-      f.write(payload)
-    f.close
-
-    `find app/assets/MTA_feeds/ -name *.json -type f -mmin +3 -delete`
+    $redis.set('realtime_update', payload)
   end
 
   def log

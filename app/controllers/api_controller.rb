@@ -5,16 +5,7 @@ class ApiController < ApplicationController
   end
 
   def update
-    # begin
-      f = Dir.glob("#{Rails.root}/app/assets/MTA_feeds/*").max_by {|f| File.mtime(f)}
-      json = File.read(f)
-      render json: JSON.parse(json)
-    # rescue
-    #   sleep 1
-    #   f = Dir.glob("#{Rails.root}/app/assets/MTA_feeds/*").max_by {|f| File.mtime(f)}
-    #   json = File.read(f)
-    #   render json: JSON.parse(json)
-    # end
+    render json: $redis.get('realtime_update')
   end
 
   def line

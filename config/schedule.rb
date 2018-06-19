@@ -2,6 +2,7 @@
 require 'clockwork'
 require "./config/boot"
 require "./config/environment"
+require './config/initializers/redis'
 require './app/workers/feed_worker'
 require './app/workers/db_flush'
 
