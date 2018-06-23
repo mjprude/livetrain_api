@@ -19,8 +19,6 @@ class MTAUpdate
     @num_updated_trips = 0
     @start_times_updated = 0
     @deletions = 0
-    @master_stops = JSON.parse(File.read(Rails.root + 'lib/assets/mta_assets/sorted_subway_stops.json'))
-    @master_routes = JSON.parse(File.read(Rails.root + 'lib/assets/mta_assets/sorted_subway_routes.json'))
   end
 
   def update_and_create
@@ -53,17 +51,8 @@ class MTAUpdate
   end
 
   def write_json
-    current_time = Time.now
-    date, time, zone = current_time.to_s.split(' ')
-
-    string = "#{Rails.root}" + "/app/assets/MTA_feeds/" + date + '_' + time.gsub(':', '.') + "_realtime.json"
-
-    payload = DBHelper::update_json(@master_stops, @master_routes)
-    f = File.open(string, 'a+')
-      f.write(payload)
-    f.close
-
-    `find app/assets/MTA_feeds/ -name *.json -type f -mmin +3 -delete`
+    payload = DBHelper::update_json(MTAUpdate.master_stops, MTAUpdate.master_routes)
+    $redis.set('realtime_update', payload)
   end
 
   def log
@@ -147,5 +136,13 @@ class MTAUpdate
     end
     update_existing_stops(entity, existing_trip)
     @num_updated_trips += 1
+  end
+
+  def self.master_stops
+    @@master_stops ||= JSON.parse(File.read(Rails.root + 'lib/assets/mta_assets/sorted_subway_stops.json'))
+  end
+
+  def self.master_routes
+    @@master_routes = JSON.parse(File.read(Rails.root + 'lib/assets/mta_assets/sorted_subway_routes.json'))
   end
 end

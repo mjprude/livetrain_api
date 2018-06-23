@@ -2,12 +2,18 @@
 -- PostgreSQL database dump
 --
 
+-- Dumped from database version 10.4
+-- Dumped by pg_dump version 10.4
+
 SET statement_timeout = 0;
 SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
 SET check_function_bodies = false;
 SET client_min_messages = warning;
+SET row_security = off;
 
 --
 -- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: -
@@ -23,17 +29,15 @@ CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
 COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 
 
-SET search_path = public, pg_catalog;
-
 SET default_tablespace = '';
 
 SET default_with_oids = false;
 
 --
--- Name: route_shapes; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: route_shapes; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE route_shapes (
+CREATE TABLE public.route_shapes (
     id integer NOT NULL,
     route_id character varying(255),
     service_id character varying(255),
@@ -49,7 +53,8 @@ CREATE TABLE route_shapes (
 -- Name: route_shapes_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE route_shapes_id_seq
+CREATE SEQUENCE public.route_shapes_id_seq
+    AS integer
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -61,23 +66,23 @@ CREATE SEQUENCE route_shapes_id_seq
 -- Name: route_shapes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE route_shapes_id_seq OWNED BY route_shapes.id;
+ALTER SEQUENCE public.route_shapes_id_seq OWNED BY public.route_shapes.id;
 
 
 --
--- Name: schema_migrations; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: schema_migrations; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE schema_migrations (
+CREATE TABLE public.schema_migrations (
     version character varying(255) NOT NULL
 );
 
 
 --
--- Name: stops; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: stops; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE stops (
+CREATE TABLE public.stops (
     id integer NOT NULL,
     created_at timestamp without time zone,
     updated_at timestamp without time zone,
@@ -89,10 +94,10 @@ CREATE TABLE stops (
 
 
 --
--- Name: trips; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+-- Name: trips; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE trips (
+CREATE TABLE public.trips (
     id integer NOT NULL,
     mta_trip_id character varying(255),
     stops_remaining integer,
@@ -109,7 +114,7 @@ CREATE TABLE trips (
 -- Name: stops_by_trip; Type: VIEW; Schema: public; Owner: -
 --
 
-CREATE VIEW stops_by_trip AS
+CREATE VIEW public.stops_by_trip AS
  SELECT trips.id,
     trips.route,
     trips.direction,
@@ -117,32 +122,16 @@ CREATE VIEW stops_by_trip AS
     stops.stop_id,
     stops.departure_time,
     stops.arrival_time
-   FROM (trips
-     JOIN stops ON ((stops.trip_id = trips.id)));
-
-
---
--- Name: stops_by_trip_test; Type: VIEW; Schema: public; Owner: -
---
-
-CREATE VIEW stops_by_trip_test AS
- SELECT trips.mta_trip_id,
-    trips.route,
-    trips.direction,
-    trips.mta_timestamp,
-    stops.stop_id,
-    stops.departure_time,
-    stops.arrival_time
-   FROM (trips
-     JOIN stops ON ((stops.trip_id = trips.id)))
-  WHERE ((trips.route)::text ~~ '1'::text);
+   FROM (public.trips
+     JOIN public.stops ON ((stops.trip_id = trips.id)));
 
 
 --
 -- Name: stops_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE stops_id_seq
+CREATE SEQUENCE public.stops_id_seq
+    AS integer
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -154,14 +143,15 @@ CREATE SEQUENCE stops_id_seq
 -- Name: stops_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE stops_id_seq OWNED BY stops.id;
+ALTER SEQUENCE public.stops_id_seq OWNED BY public.stops.id;
 
 
 --
 -- Name: trips_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE trips_id_seq
+CREATE SEQUENCE public.trips_id_seq
+    AS integer
     START WITH 1
     INCREMENT BY 1
     NO MINVALUE
@@ -173,66 +163,73 @@ CREATE SEQUENCE trips_id_seq
 -- Name: trips_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE trips_id_seq OWNED BY trips.id;
+ALTER SEQUENCE public.trips_id_seq OWNED BY public.trips.id;
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: route_shapes id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY route_shapes ALTER COLUMN id SET DEFAULT nextval('route_shapes_id_seq'::regclass);
-
-
---
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY stops ALTER COLUMN id SET DEFAULT nextval('stops_id_seq'::regclass);
+ALTER TABLE ONLY public.route_shapes ALTER COLUMN id SET DEFAULT nextval('public.route_shapes_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: stops id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY trips ALTER COLUMN id SET DEFAULT nextval('trips_id_seq'::regclass);
+ALTER TABLE ONLY public.stops ALTER COLUMN id SET DEFAULT nextval('public.stops_id_seq'::regclass);
 
 
 --
--- Name: route_shapes_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: trips id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY route_shapes
+ALTER TABLE ONLY public.trips ALTER COLUMN id SET DEFAULT nextval('public.trips_id_seq'::regclass);
+
+
+--
+-- Name: route_shapes route_shapes_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.route_shapes
     ADD CONSTRAINT route_shapes_pkey PRIMARY KEY (id);
 
 
 --
--- Name: stops_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: stops stops_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY stops
+ALTER TABLE ONLY public.stops
     ADD CONSTRAINT stops_pkey PRIMARY KEY (id);
 
 
 --
--- Name: trips_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+-- Name: trips trips_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY trips
+ALTER TABLE ONLY public.trips
     ADD CONSTRAINT trips_pkey PRIMARY KEY (id);
 
 
 --
--- Name: unique_schema_migrations; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+-- Name: index_stops_on_trip_id_and_departure_time_and_arrival_time; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE UNIQUE INDEX unique_schema_migrations ON schema_migrations USING btree (version);
+CREATE INDEX index_stops_on_trip_id_and_departure_time_and_arrival_time ON public.stops USING btree (trip_id, departure_time, arrival_time);
+
+
+--
+-- Name: unique_schema_migrations; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX unique_schema_migrations ON public.schema_migrations USING btree (version);
 
 
 --
 -- PostgreSQL database dump complete
 --
 
-SET search_path TO "$user",public;
+SET search_path TO "$user", public;
 
 INSERT INTO schema_migrations (version) VALUES ('20141206204614');
 
@@ -256,9 +253,9 @@ INSERT INTO schema_migrations (version) VALUES ('20141226155713');
 
 INSERT INTO schema_migrations (version) VALUES ('20141226155759');
 
-INSERT INTO schema_migrations (version) VALUES ('20150104152001');
-
 INSERT INTO schema_migrations (version) VALUES ('20150111212038');
 
 INSERT INTO schema_migrations (version) VALUES ('20150126225917');
+
+INSERT INTO schema_migrations (version) VALUES ('20180623135649');
 
