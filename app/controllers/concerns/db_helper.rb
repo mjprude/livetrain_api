@@ -110,7 +110,7 @@ module DBHelper
         end
         route_obj
       end
-    end.to_json
+    end.compact.to_json
   end
 end
 
